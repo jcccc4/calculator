@@ -5,6 +5,7 @@ function calculator() {
     let grid = document.createElement( 'div' );
     calculator.className = "calculator";
     screen.className = "screen";
+    screen.innerText = '0';
     grid.className = "grid";
     app.append( calculator );
     calculator.append( screen );
@@ -109,25 +110,20 @@ function calculator() {
 
                         return;
                     }
-                    else
-                        if ( ( screenSelector.innerText.lastIndexOf( '+0' ) + 1 === screenSelector.innerText.length - 1 ||
-                            screenSelector.innerText.lastIndexOf( '-0' ) + 1 === screenSelector.innerText.length - 1 ||
-                            screenSelector.innerText.lastIndexOf( '*0' ) + 1 === screenSelector.innerText.length - 1 ||
-                            screenSelector.innerText.lastIndexOf( '/0' ) + 1 === screenSelector.innerText.length - 1 ) &&
-                            !( e.target.id === `num0` ) && screenSelector.innerText.length - 1 !== 0
-                        ) {
-                            console.log( screenSelector.innerText.slice( 0, -1 ) );
-                            screenSelector.innerText = `${ screenSelector.innerText.slice( 0, -1 ) }${ numbers }`;
-                        }
-                        else {
-                            if ( screenSelector.innerText.lastIndexOf( '0' ) === 0 ) {
-                                screenSelector.innerText = `${ numbers }`;
-                            } else {
-                                screenSelector.innerText += numbers;
-                            }
-                        }
-
-
+                    else if ( ( screenSelector.innerText.lastIndexOf( '+0' ) + 1 === screenSelector.innerText.length - 1 ||
+                        screenSelector.innerText.lastIndexOf( '-0' ) + 1 === screenSelector.innerText.length - 1 ||
+                        screenSelector.innerText.lastIndexOf( '*0' ) + 1 === screenSelector.innerText.length - 1 ||
+                        screenSelector.innerText.lastIndexOf( '/0' ) + 1 === screenSelector.innerText.length - 1 ) &&
+                        !( e.target.id === `num0` ) && screenSelector.innerText.length - 1 !== 0
+                    ) {
+                        console.log( screenSelector.innerText.slice( 0, -1 ) );
+                        screenSelector.innerText = `${ screenSelector.innerText.slice( 0, -1 ) }${ numbers }`;
+                    }
+                    else if ( screenSelector.innerText.lastIndexOf( '0' ) === 0 ) {
+                        screenSelector.innerText = `${ numbers }`;
+                    } else {
+                        screenSelector.innerText += numbers;
+                    }
                 }
             }
         }
@@ -165,7 +161,7 @@ function calculator() {
         switch ( e.target.id ) {
             case 'clr':
                 arr = [];
-                screenSelector.innerText = '';
+                screenSelector.innerText = '0';
                 break;
             case 'del':
                 if ( lastIsEqual ) {
@@ -228,6 +224,7 @@ function calculator() {
                 }
             case 'equal':
                 lastIsEqual = true;
+                console.log( arr );
                 for ( arrlen = 0; arrlen < arr.length; arrlen++ ) {
                     if ( arr[ arrlen ] === 'add' ) {
                         arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '+' ) + 1, screenSelector.innerText.length ) ) );
@@ -271,7 +268,9 @@ function calculator() {
                 }
                 break;
             case 'dot':
-                console.log( 'dot' );
+                console.log( screenSelector.innerText.lastIndexOf( '.' ), screenSelector.innerText.length - 1 );
+                if ( screenSelector.innerText.lastIndexOf( '.' ) === screenSelector.innerText.length - 1 && screenSelector.innerText.length > 1 ) { return; }
+                else { screenSelector.innerText += `.`; }
                 break;
         }
     }
