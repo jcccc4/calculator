@@ -268,6 +268,9 @@ function calculator() {
                 }
                 break;
             case 'dot':
+                if ( oper === true ) {
+                    oper = false;
+                }
                 console.log( screenSelector.innerText.lastIndexOf( '.' ), screenSelector.innerText.length - 1 );
                 if ( screenSelector.innerText.lastIndexOf( '.' ) === screenSelector.innerText.length - 1 && screenSelector.innerText.length > 1 ) { return; }
                 else { screenSelector.innerText += `.`; }
