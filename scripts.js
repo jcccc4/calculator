@@ -292,6 +292,8 @@ function calculator() {
                 }
                 while ( arr.indexOf( '+' ) !== -1 ) {
                     screenSelector.innerText = `${ add( arr[ arr.indexOf( '+' ) - 1 ], arr[ arr.indexOf( '+' ) + 1 ] ) }`;
+                    arr.splice( arr.indexOf( '+' ) - 1, 3, screenSelector.innerText );
+
 
                 }
                 while ( arr.indexOf( '-' ) !== -1 ) {
