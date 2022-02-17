@@ -279,7 +279,6 @@ function calculator() {
                 }
                 while ( arr.indexOf( '/' ) !== -1 ) {
                     if ( arr[ arr.indexOf( '/' ) + 1 ] === "0" ) {
-
                         screenSelector.innerText = 'Error';
                         arr = 'Error';
                     }
@@ -287,19 +286,15 @@ function calculator() {
                         screenSelector.innerText = `${ divide( arr[ arr.indexOf( '/' ) - 1 ], arr[ arr.indexOf( '/' ) + 1 ] ) }`;
                         arr.splice( arr.indexOf( '/' ) - 1, 3, screenSelector.innerText );
                     }
-
-
                 }
                 while ( arr.indexOf( '+' ) !== -1 ) {
                     screenSelector.innerText = `${ add( arr[ arr.indexOf( '+' ) - 1 ], arr[ arr.indexOf( '+' ) + 1 ] ) }`;
                     arr.splice( arr.indexOf( '+' ) - 1, 3, screenSelector.innerText );
 
-
                 }
                 while ( arr.indexOf( '-' ) !== -1 ) {
                     screenSelector.innerText = `${ subtract( arr[ arr.indexOf( '-' ) - 1 ], arr[ arr.indexOf( '-' ) + 1 ] ) }`;
                     arr.splice( arr.indexOf( '-' ) - 1, 3, screenSelector.innerText );
-
                 }
                 if ( screenSelector.innerText.length > 10 ) {
                     if ( screenSelector.innerText.lastIndexOf( '.' ) !== -1 ) {
