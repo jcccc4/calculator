@@ -10,9 +10,9 @@ function calculator() {
     app.append( calculator );
     calculator.append( screen );
     calculator.append( grid );
-    let arr = [];
-    var oper = false;
+    let arr = '';
     var lastIsEqual = false;
+    var oper = false;
     for ( let i = 0; i < 20; i++ ) {
         if ( i < 10 ) {
             let grid_item = document.createElement( 'div' );
@@ -90,14 +90,20 @@ function calculator() {
         for ( let numbers = 0; numbers < 10; numbers++ ) {
 
             if ( e.target.id === `num${ numbers }` ) {
-                if ( oper === true ) {
-                    oper = false;
-                }
                 if ( screenSelector.innerText.length < 10 ) {
-                    console.log( e.target.id );
-                    if ( lastIsEqual ) {
+                    if ( lastIsEqual && (
+                        screenSelector.innerText.lastIndexOf( '^' ) !== screenSelector.innerText.length - 1 &&
+                        screenSelector.innerText.lastIndexOf( '*' ) !== screenSelector.innerText.length - 1 &&
+                        screenSelector.innerText.lastIndexOf( '/' ) !== screenSelector.innerText.length - 1 &&
+                        screenSelector.innerText.lastIndexOf( '+' ) !== screenSelector.innerText.length - 1 &&
+                        screenSelector.innerText.lastIndexOf( '-' ) !== screenSelector.innerText.length - 1 ) ) {
                         screenSelector.innerText = '';
                         lastIsEqual = false;
+                    } else {
+                        lastIsEqual = false;
+                    }
+                    if ( oper === true ) {
+                        oper = false;
                     }
                     if ( screenSelector.innerText.lastIndexOf( '0' ) === 0 && e.target.id === `num0` ) { screenSelector.innerText = '0'; }
                     else if (
@@ -116,40 +122,43 @@ function calculator() {
                         screenSelector.innerText.lastIndexOf( '/0' ) + 1 === screenSelector.innerText.length - 1 ) &&
                         !( e.target.id === `num0` ) && screenSelector.innerText.length - 1 !== 0
                     ) {
-                        console.log( screenSelector.innerText.slice( 0, -1 ) );
                         screenSelector.innerText = `${ screenSelector.innerText.slice( 0, -1 ) }${ numbers }`;
                     }
                     else if ( screenSelector.innerText.lastIndexOf( '0' ) === 0 ) {
-                        screenSelector.innerText = `${ numbers }`;
+                        ( screenSelector.innerText.lastIndexOf( '.' ) === 1 ) ? screenSelector.innerText += numbers :
+                            screenSelector.innerText = `${ numbers }`;
                     } else {
                         screenSelector.innerText += numbers;
                     }
                 }
             }
+
         }
 
 
 
         const add = function ( x, y ) {
+            x = Number( x );
+            y = Number( y );
             return x + y;
         };
 
-        const subtract = function ( x, y ) {
+        const subtract = function ( x = 0, y = 0 ) {
             return x - y;
         };
 
-        const multiply = function ( x, y ) {
+        const multiply = function ( x = 0, y = 0 ) {
             return x * y;
         };
 
-        const divide = function ( x, y ) {
+        const divide = function ( x = 0, y = 0 ) {
             return x / y;
         };
 
-        const raise = function ( x, y ) {
+        const raise = function ( x = 0, y = 0 ) {
             return Math.pow( x, y );
         };
-        const power = function ( x, y ) {
+        const power = function ( x = 0, y = 0 ) {
             let init = 1;
             for ( let i = 0; i < y; i++ ) {
                 init *= x;
@@ -160,119 +169,151 @@ function calculator() {
 
         switch ( e.target.id ) {
             case 'clr':
-                arr = [];
                 screenSelector.innerText = '0';
                 break;
             case 'del':
-                if ( lastIsEqual ) {
-                    arr = [];
-                    screenSelector.innerText = '';
-                } else {
-                    screenSelector.innerText = screenSelector.innerText.slice( 0, -1 );
-                }
-
+                ( lastIsEqual ) ? screenSelector.innerText = '0' : screenSelector.innerText = screenSelector.innerText.slice( 0, -1 );
                 break;
             case 'raise':
-                if ( screenSelector.innerText.lastIndexOf( '^' ) !== -1 ) {
-                    return;
-                } else {
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    let words = screenSelector.innerText.split( '' );
+                    words.splice( ( screenSelector.innerText.length - 1 ), 1, "^" );
+                    screen.innerText = words.join( '' );
+                }
+                else {
+                    screenSelector.innerText = `${ screenSelector.innerText }^`;
                     oper = true;
-                    arr.push( Number( screenSelector.innerText ), 'raise' );
-                    ( lastIsEqual ) ? screenSelector.innerText :
-                        screenSelector.innerText = `${ screenSelector.innerText }^`;
                 }
                 break;
             case 'divide':
-                if ( screenSelector.innerText.lastIndexOf( '/' ) !== -1 ) {
-                    return;
-                } else {
-                    oper = true;
-                    arr.push( Number( screenSelector.innerText ), 'divide' );
-                    ( lastIsEqual ) ? screenSelector.innerText :
-                        screenSelector.innerText = `${ screenSelector.innerText }/`;
-                    break;
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    let words = screenSelector.innerText.split( '' );
+                    words.splice( ( screenSelector.innerText.length - 1 ), 1, "/" );
+                    screen.innerText = words.join( '' );
                 }
+                else {
+                    screenSelector.innerText = `${ screenSelector.innerText }/`;
+                    oper = true;
+                }
+                break;
             case 'multiply':
-                if ( screenSelector.innerText.lastIndexOf( '*' ) !== -1 ) {
-                    return;
-                } else {
-                    oper = true;
-                    arr.push( Number( screenSelector.innerText ), 'multiply' );
-                    ( lastIsEqual ) ? screenSelector.innerText :
-                        screenSelector.innerText = `${ screenSelector.innerText }*`;
-                    break;
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    let words = screenSelector.innerText.split( '' );
+                    words.splice( ( screenSelector.innerText.length - 1 ), 1, "*" );
+                    screen.innerText = words.join( '' );
                 }
+                else {
+                    screenSelector.innerText = `${ screenSelector.innerText }*`;
+                    oper = true;
+                }
+                break;
             case 'subtract':
-                if ( screenSelector.innerText.lastIndexOf( '-' ) !== -1 ) {
-                    return;
-                } else {
-                    oper = true;
-                    arr.push( Number( screenSelector.innerText ), 'subtract' );
-                    ( lastIsEqual ) ? screenSelector.innerText :
-                        screenSelector.innerText = `${ screenSelector.innerText }-`;
-                    break;
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    let words = screenSelector.innerText.split( '' );
+                    words.splice( ( screenSelector.innerText.length - 1 ), 1, "-" );
+                    screen.innerText = words.join( '' );
                 }
+                else {
+                    screenSelector.innerText = `${ screenSelector.innerText }-`;
+                    oper = true;
+                }
+                break;
+
             case 'add':
-                if ( screenSelector.innerText.lastIndexOf( '+' ) !== -1 ) {
-                    return;
-                } else {
-                    oper = true;
-                    arr.push( Number( screenSelector.innerText ), 'add' );
-                    ( lastIsEqual ) ? screenSelector.innerText = screenSelector.innerText :
-                        screenSelector.innerText = `${ screenSelector.innerText }+`;
-                    break;
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    let words = screenSelector.innerText.split( '' );
+                    words.splice( ( screenSelector.innerText.length - 1 ), 1, "+" );
+                    screen.innerText = words.join( '' );
                 }
+                else {
+                    screenSelector.innerText = `${ screenSelector.innerText }+`;
+                    oper = true;
+                }
+                break;
             case 'equal':
+                if ( screenSelector.innerText.lastIndexOf( '^' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '*' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '/' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '+' ) === screenSelector.innerText.length - 1 ||
+                    screenSelector.innerText.lastIndexOf( '-' ) === screenSelector.innerText.length - 1 ) {
+                    arr = screenSelector.innerText.split( '' );
+                    screenSelector.innerText = arr.slice( 0, -1 ).join( '' );
+
+                }
+
                 lastIsEqual = true;
-                console.log( arr );
-                for ( arrlen = 0; arrlen < arr.length; arrlen++ ) {
-                    if ( arr[ arrlen ] === 'add' ) {
-                        arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '+' ) + 1, screenSelector.innerText.length ) ) );
-                        if ( arr[ arrlen + 1 ] ) {
-                            screenSelector.innerText = `${ add( arr[ arrlen - 1 ], arr[ arrlen + 1 ] ) }`;
-                            arr = [];
-                        }
+                arr = screenSelector.innerText.split( '+' ).join( '|+|' );
+                arr = arr.split( '-' ).join( '|-|' );
+                arr = arr.split( '*' ).join( '|*|' );
+                arr = arr.split( '/' ).join( '|/|' );
+                arr = arr.split( '^' ).join( '|^|' );
+                arr = arr.split( '|' );
+                while ( arr.indexOf( '^' ) !== -1 ) {
+                    screenSelector.innerText = `${ raise( arr[ arr.indexOf( '^' ) - 1 ], arr[ arr.indexOf( '^' ) + 1 ] ) }`;
+                    arr.splice( arr.indexOf( '^' ) - 1, 3, screenSelector.innerText );
+                }
+                while ( arr.indexOf( '*' ) !== -1 ) {
+                    screenSelector.innerText = `${ multiply( arr[ arr.indexOf( '*' ) - 1 ], arr[ arr.indexOf( '*' ) + 1 ] ) }`;
+                    arr.splice( arr.indexOf( '*' ) - 1, 3, screenSelector.innerText );
+
+                }
+                while ( arr.indexOf( '/' ) !== -1 ) {
+                    if ( arr[ arr.indexOf( '/' ) + 1 ] === "0" ) {
+
+                        screenSelector.innerText = 'Error';
+                        arr = 'Error';
                     }
-                    else if ( arr[ arrlen ] === "subtract" ) {
-                        arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '-' ) + 1, screenSelector.innerText.length ) ) );
-                        console.log( arr );
-                        if ( arr[ arrlen + 1 ] ) {
-                            screenSelector.innerText = `${ subtract( arr[ arrlen - 1 ], arr[ arrlen + 1 ] ) }`;
-                            arr = [];
-                        }
+                    else {
+                        screenSelector.innerText = `${ divide( arr[ arr.indexOf( '/' ) - 1 ], arr[ arr.indexOf( '/' ) + 1 ] ) }`;
+                        arr.splice( arr.indexOf( '/' ) - 1, 3, screenSelector.innerText );
                     }
-                    else if ( arr[ arrlen ] === "multiply" ) {
-                        arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '*' ) + 1, screenSelector.innerText.length ) ) );
-                        console.log( arr );
-                        if ( arr[ arrlen + 1 ] ) {
-                            screenSelector.innerText = `${ multiply( arr[ arrlen - 1 ], arr[ arrlen + 1 ] ) }`;
-                            arr = [];
+
+
+                }
+                while ( arr.indexOf( '+' ) !== -1 ) {
+                    screenSelector.innerText = `${ add( arr[ arr.indexOf( '+' ) - 1 ], arr[ arr.indexOf( '+' ) + 1 ] ) }`;
+
+                }
+                while ( arr.indexOf( '-' ) !== -1 ) {
+                    screenSelector.innerText = `${ subtract( arr[ arr.indexOf( '-' ) - 1 ], arr[ arr.indexOf( '-' ) + 1 ] ) }`;
+                    arr.splice( arr.indexOf( '-' ) - 1, 3, screenSelector.innerText );
+
+                }
+                if ( screenSelector.innerText.length > 10 ) {
+                    if ( screenSelector.innerText.lastIndexOf( '.' ) !== -1 ) {
+                        if ( Number( screenSelector.innerText ) > 999999999 ) {
+
+                            screenSelector.innerText = `${ Number( screenSelector.innerText ).toExponential( 4 ) }`;
                         }
+                        else {
+                            screenSelector.innerText = `${ Number( screenSelector.innerText ).toFixed( 9 - screenSelector.innerText.lastIndexOf( '.' ) ) }`;
+                        };
                     }
-                    else if ( arr[ arrlen ] === "divide" ) {
-                        arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '/' ) + 1, screenSelector.innerText.length ) ) );
-                        console.log( arr );
-                        if ( arr[ arrlen + 1 ] ) {
-                            screenSelector.innerText = `${ divide( arr[ arrlen - 1 ], arr[ arrlen + 1 ] ) }`;
-                            arr = [];
-                        }
-                    }
-                    else if ( arr[ arrlen ] === "raise" ) {
-                        arr.push( Number( screenSelector.innerText.slice( screenSelector.innerText.lastIndexOf( '^' ) + 1, screenSelector.innerText.length ) ) );
-                        console.log( arr );
-                        if ( arr[ arrlen + 1 ] ) {
-                            screenSelector.innerText = `${ raise( arr[ arrlen - 1 ], arr[ arrlen + 1 ] ) }`;
-                            arr = [];
-                        }
-                    }
+                    else ( screenSelector.innerText = screenSelector.innerText.slice( 0, 10 ) );
                 }
                 break;
             case 'dot':
-                if ( oper === true ) {
-                    oper = false;
-                }
-                console.log( screenSelector.innerText.lastIndexOf( '.' ), screenSelector.innerText.length - 1 );
-                if ( screenSelector.innerText.lastIndexOf( '.' ) === screenSelector.innerText.length - 1 && screenSelector.innerText.length > 1 ) { return; }
+                if ( screenSelector.innerText.lastIndexOf( '.' ) === screenSelector.innerText.length - 1 ) { return; }
                 else { screenSelector.innerText += `.`; }
                 break;
         }
